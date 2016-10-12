@@ -7,7 +7,12 @@ program test_rpc;
 {$ENDIF}
 
 uses
-  SysUtils, superobject;
+  SysUtils,
+  superdate in '..\superdate.pas',
+  superobject in '..\superobject.pas',
+  supertimezone in '..\supertimezone.pas',
+  supertypes in '..\supertypes.pas',
+  superxmlparser in '..\superxmlparser.pas';
 
 procedure controler_method1(const This, Params: ISuperObject; var Result: ISuperObject);
 begin

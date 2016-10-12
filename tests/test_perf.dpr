@@ -7,11 +7,15 @@ program test_perf;
 {$ENDIF}
 
 uses
-{$IFNDEF UNIX}
+  {$IFNDEF UNIX}
   windows,
-{$ENDIF}
+  {$ENDIF }
   sysutils,
-  superobject;
+  superdate in '..\superdate.pas',
+  superobject in '..\superobject.pas',
+  supertimezone in '..\supertimezone.pas',
+  supertypes in '..\supertypes.pas',
+  superxmlparser in '..\superxmlparser.pas';
 
 {$IFDEF UNIX}
 function GetTickCount: Cardinal;
@@ -59,7 +63,7 @@ begin
   writeln('time for gentext:',k);
 
   k := GetTickCount;
-  xs := TSuperObject.ParseString(pb.Data);
+  xs := TSuperObject.ParseString(pb.Data, true);
 
   k := GetTickCount-k;
   writeln('time for parse:',k);

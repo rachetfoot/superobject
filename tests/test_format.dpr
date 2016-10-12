@@ -6,7 +6,12 @@ program test_format;
 {$ENDIF}
 
 uses
-  SysUtils, superobject;
+  SysUtils,
+  superdate in '..\superdate.pas',
+  superobject in '..\superobject.pas',
+  supertimezone in '..\supertimezone.pas',
+  supertypes in '..\supertypes.pas',
+  superxmlparser in '..\superxmlparser.pas';
 
 const
   data =
@@ -19,7 +24,7 @@ const
 var
   new_obj: ISuperObject;
 begin
-  new_obj := TSuperObject.ParseString(data);
+  new_obj := TSuperObject.ParseString(data, true);
   writeln('new_obj.AsJson=', new_obj.AsJson(true, false));
   new_obj := nil;
   writeln(#10'press enter ...');

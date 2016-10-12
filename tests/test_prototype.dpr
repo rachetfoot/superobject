@@ -8,7 +8,11 @@ program test_prototype;
 
 uses
   SysUtils,
-  superobject;
+  superdate in '..\superdate.pas',
+  superobject in '..\superobject.pas',
+  supertimezone in '..\supertimezone.pas',
+  supertypes in '..\supertypes.pas',
+  superxmlparser in '..\superxmlparser.pas';
 
 var
   proto, obj: ISuperObject;

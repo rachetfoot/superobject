@@ -7,7 +7,12 @@ program test_validate;
 
 
 uses
-  SysUtils, superobject;
+  SysUtils,
+  superdate in '..\superdate.pas',
+  superobject in '..\superobject.pas',
+  supertimezone in '..\supertimezone.pas',
+  supertypes in '..\supertypes.pas',
+  superxmlparser in '..\superxmlparser.pas';
 
 procedure onerror(sender: Pointer; error: TSuperValidateError; const path: SOString);
 const
@@ -31,7 +36,7 @@ procedure Validate(const d, r, f: SOString);
 var
   o: ISuperObject;
 begin
-  o := TSuperObject.ParseString(PSOChar(d));
+  o := TSuperObject.ParseString(PSOChar(d), false);
   case o.Validate(r, f, @onerror) of
     true: writeln('valid');
     false: writeln('invalid');

@@ -7,7 +7,11 @@ program test_usage;
 
 uses
   SysUtils,
-  superobject;
+  superdate in '..\superdate.pas',
+  superobject in '..\superobject.pas',
+  supertimezone in '..\supertimezone.pas',
+  supertypes in '..\supertypes.pas',
+  superxmlparser in '..\superxmlparser.pas';
 
 var
   my_string, my_int, my_object, my_array: ISuperObject;
