@@ -770,12 +770,14 @@ type
 
   SOName = class(TSuperAttribute);
   SODefault = class(TSuperAttribute);
+  SOIgnore = class(TCustomAttribute);
 
 
   TSuperRttiContext = class
   private
     class function GetFieldName(r: TRttiField): string;
     class function GetFieldDefault(r: TRttiField; const obj: ISuperObject): ISuperObject;
+    class function IsFieldIgnored(r: TRttiField): boolean;
   public
     Context: TRttiContext;
     SerialFromJson: TDictionary<PTypeInfo, TSerialFromJson>;
@@ -5909,6 +5911,16 @@ begin
   Result := obj;
 end;
 
+class function TSuperRttiContext.IsFieldIgnored(r: TRttiField): boolean;
+var
+  O: TCustomAttribute;
+begin
+  Result := false;
+  for O in r.GetAttributes do
+    if O is SOIgnore then
+      Exit(true);
+end;
+
 function TSuperRttiContext.AsType<T>(const obj: ISuperObject): T;
 var
   ret: TValue;
@@ -6089,7 +6101,7 @@ function TSuperRttiContext.FromJson(TypeInfo: PTypeInfo; const obj: ISuperObject
           if Value.Kind <> tkClass then
             Value := GetTypeData(TypeInfo).ClassType.Create;
           for f in Context.GetType(Value.AsObject.ClassType).GetFields do
-            if f.FieldType <> nil then
+            if (f.FieldType <> nil) and (not IsFieldIgnored(F)) then
             begin
               v := TValue.Empty;
               Result := FromJson(f.FieldType.Handle, GetFieldDefault(f, obj.AsObject[GetFieldName(f)]), v);
@@ -6119,6 +6131,7 @@ function TSuperRttiContext.FromJson(TypeInfo: PTypeInfo; const obj: ISuperObject
     Result := True;
     TValue.Make(nil, TypeInfo, Value);
     for f in Context.GetType(TypeInfo).GetFields do
+    if (not IsFieldIgnored(f)) then
     begin
       if ObjectIsType(obj, stObject) and (f.FieldType <> nil) then
       begin
@@ -6420,7 +6433,8 @@ function TSuperRttiContext.ToJson(var value: TValue; const index: ISuperObject):
         Result := TSuperObject.Create(stObject);
         index[IntToStr(NativeInt(Value.AsObject))] := Result;
         for f in Context.GetType(Value.AsObject.ClassType).GetFields do
-          if f.FieldType <> nil then
+          if (F.FieldType <> nil) and
+            (not IsFieldIgnored(F)) then
           begin
             v := f.GetValue(Value.AsObject);
             Result.AsObject[GetFieldName(f)] := ToJson(v, index);
@@ -6448,6 +6462,7 @@ function TSuperRttiContext.ToJson(var value: TValue; const index: ISuperObject):
   begin
     Result := TSuperObject.Create(stObject);
     for f in Context.GetType(Value.TypeInfo).GetFields do
+    if (not IsFieldIgnored(f)) then
     begin
 {$IFDEF VER210}
       v := f.GetValue(IValueData(TValueData(Value).FHeapData).GetReferenceToRawData);
