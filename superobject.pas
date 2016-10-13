@@ -6090,6 +6090,7 @@ function TSuperRttiContext.FromJson(TypeInfo: PTypeInfo; const obj: ISuperObject
   var
     f: TRttiField;
     v: TValue;
+    fieldObj:ISuperObject;
   begin
     case ObjectGetType(obj) of
       stObject:
@@ -6101,10 +6102,16 @@ function TSuperRttiContext.FromJson(TypeInfo: PTypeInfo; const obj: ISuperObject
             if (f.FieldType <> nil) and (not IsFieldIgnored(F)) then
             begin
               v := TValue.Empty;
-              Result := FromJson(f.FieldType.Handle, GetFieldDefault(f, obj.AsObject[GetFieldName(f)]), v);
-              if Result then
-                f.SetValue(Value.AsObject, v) else
-                Exit;
+              fieldObj:=GetFieldDefault(f, obj.AsObject[GetFieldName(f)]);
+              //ATRLP: 20160708: optional (no value in JSON) fields are allowed
+              //JFB: Fixed for default values
+              if fieldObj<>nil then
+              begin
+                Result := FromJson(f.FieldType.Handle, fieldObj, v);
+                if Result then
+                  f.SetValue(Value.AsObject, v) else
+                  Exit;
+              end;
             end;
         end;
       stNull:
@@ -6124,6 +6131,7 @@ function TSuperRttiContext.FromJson(TypeInfo: PTypeInfo; const obj: ISuperObject
     f: TRttiField;
     p: Pointer;
     v: TValue;
+    fieldObj:ISuperObject;
   begin
     Result := True;
     TValue.Make(nil, TypeInfo, Value);
@@ -6137,13 +6145,19 @@ function TSuperRttiContext.FromJson(TypeInfo: PTypeInfo; const obj: ISuperObject
 {$ELSE}
         p := TValueData(Value).FValueData.GetReferenceToRawData;
 {$ENDIF}
-        Result := FromJson(f.FieldType.Handle, GetFieldDefault(f, obj.AsObject[GetFieldName(f)]), v);
-        if Result then
-          f.SetValue(p, v) else
-          begin
-            //Writeln(f.Name);
-            Exit;
-          end;
+        fieldObj:=GetFieldDefault(f, obj.AsObject[GetFieldName(f)]);
+        //ATRLP: 20160708: optional (no value in JSON) fields are allowed
+        //JFB: Fixed for default values
+        if fieldObj<>nil then
+        begin
+          Result := FromJson(f.FieldType.Handle, fieldObj, v);
+          if Result then
+            f.SetValue(p, v) else
+            begin
+              //Writeln(f.Name);
+              Exit;
+            end;
+        end;
       end else
       begin
         Result := False;
