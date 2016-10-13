@@ -86,28 +86,28 @@
 
 {$IF CompilerVersion >= 21.0}
   {$define VER210ORGREATER}
-{$ifend}
+{$ENDIF}
 
 {$IF CompilerVersion >= 23.0}
   {$define VER230ORGREATER}
-{$ifend}
+{$ENDIF}
 
 {$if defined(FPC) or defined(VER170) or defined(VER180) or defined(VER190)
   or defined(VER200) or defined(VER210ORGREATER)}
   {$DEFINE HAVE_INLINE}
-{$ifend}
+{$ENDIF}
 
 {$if defined(VER210ORGREATER)}
   {$define HAVE_RTTI}
-{$ifend}
+{$ENDIF}
 
 {$if defined(VER230ORGREATER)}
   {$define NEED_FORMATSETTINGS}
-{$ifend}
+{$ENDIF}
 
 {$if defined(FPC) and defined(VER2_6)}
   {$define NEED_FORMATSETTINGS}
-{$ifend}
+{$ENDIF}
 
 {$OVERFLOWCHECKS OFF}
 {$RANGECHECKS OFF}
@@ -956,11 +956,11 @@ var
   p: PSOChar;
 begin
   Result := FloatToStr(value);
-  if {$if defined(NEED_FORMATSETTINGS)}FormatSettings.{$ifend}DecimalSeparator <> '.' then
+  if {$if defined(NEED_FORMATSETTINGS)}FormatSettings.{$ENDIF}DecimalSeparator <> '.' then
   begin
     p := PSOChar(Result);
     while p^ <> #0 do
-      if p^ <> SOChar({$if defined(NEED_FORMATSETTINGS)}FormatSettings.{$ifend}DecimalSeparator) then
+      if p^ <> SOChar({$if defined(NEED_FORMATSETTINGS)}FormatSettings.{$ENDIF}DecimalSeparator) then
       inc(p) else
       begin
         p^ := '.';
@@ -974,11 +974,11 @@ var
   p: PSOChar;
 begin
   Result := CurrToStr(value);
-  if {$if defined(NEED_FORMATSETTINGS)}FormatSettings.{$ifend}DecimalSeparator <> '.' then
+  if {$if defined(NEED_FORMATSETTINGS)}FormatSettings.{$ENDIF}DecimalSeparator <> '.' then
   begin
     p := PSOChar(Result);
     while p^ <> #0 do
-      if p^ <> SOChar({$if defined(NEED_FORMATSETTINGS)}FormatSettings.{$ifend}DecimalSeparator) then
+      if p^ <> SOChar({$if defined(NEED_FORMATSETTINGS)}FormatSettings.{$ENDIF}DecimalSeparator) then
       inc(p) else
       begin
         p^ := '.';
@@ -1062,7 +1062,7 @@ begin
 {$if declared(vtUnicodeString)}
       vtUnicodeString:
           Add(TSuperObject.Create(SOString(string(TVarRec(Args[j]).VUnicodeString))));
-{$ifend}
+{$ENDIF}
     else
       assert(false);
     end;
@@ -1106,7 +1106,7 @@ begin
   {$ELSE}
     varUString:  Result := TSuperObject.Create(SOString(string(VUString)));
   {$ENDIF}
-{$ifend}
+{$ENDIF}
   else
     raise Exception.CreateFmt('Unsuported variant data type: %d', [VType]);
   end;
