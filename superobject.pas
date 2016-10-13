@@ -838,7 +838,7 @@ function SOInvoke(const obj: TValue; const method: string; const params: string;
 
 implementation
 uses
-  sysutils, Windows, superdate
+  sysutils, Windows, superdate, variants
 {$IFDEF FPC}
   ,sockets
 {$ELSE}
@@ -6311,7 +6311,12 @@ function TSuperRttiContext.FromJson(TypeInfo: PTypeInfo; const obj: ISuperObject
         begin
           Value := obj.AsString;
           Result := True;
-        end
+        end;
+      stNull:
+        begin
+          Value := TValue.From<Variant>(Null);
+          Result := true;
+        end;
     else
       Value := nil;
       Result := False;
