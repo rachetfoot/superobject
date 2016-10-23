@@ -1,3 +1,48 @@
+#TJsonSerializer
+A "one-line" serializer/deserializer JSON making use of SuperObject. Adapted from github.com/hgourvest/superobject and github.com/fOCUSVRN/TJsonSerializer
+
+##Using
+
+```pas
+uses TJsonSerializer;
+
+MyClass:=TJsonSerializer.Deserialize<TMyClass>(Json);
+
+// or
+
+Json:=TjsonSeializer.Serialize(MyClass);
+
+```
+
+###Features:
+- Supports up to Delphi 10.1 Berlin
+- Correct serialize/deserialize null field. Need to set field type to variant. In code available check for null
+- Can use Attribute [SOIgnore] to ignore the serialization/deserialization field or property
+
+Add superobject to uses to use attributes (SOIGnore, SOName, SODefault).
+
+For example:
+
+```pas
+type
+TMyClass = class
+public
+[SOIgnore]
+ignored_field:string;
+[SOName("bar"), SODefault('value')]
+foo:string;
+end;
+
+```
+
+```js
+{
+	"bar" : "value"
+}
+```
+
+
+
 # SuperObject
 
 ## What is JSON ?
@@ -8,7 +53,7 @@
 - It is based on a subset of the JavaScript Programming Language, Standard ECMA-262 3rd Edition - December 1999.
 - JSON is a text format that is completely language independent but uses conventions that are familiar to programmers.
 - These properties make JSON an ideal data-interchange language.
-- You can get more informations on [json.org](http://www.json.org).
+- You can get more information at [json.org](http://www.json.org).
 
 ```js
 {
@@ -17,14 +62,14 @@
   "telephones": ["000000000", "111111111111"],
   "age": 33,
   "size": 1.83,
-  "adresses": [
+  "addresses": [
     {
-      "adress": "foo",
+      "address": "foo",
       "city": "The wall",
       "pc": 57000
     },
     {
-      "adress": "foo",
+      "address": "foo",
       "city": "Winterfell",
       "pc": 44000
     }
